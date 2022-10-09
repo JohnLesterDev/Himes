@@ -3,6 +3,9 @@
  */
 package com.himes;
 
+import com.himes.Item;
+import com.google.gson.Gson;
+
 public class App {
     public String getGreeting() {
         return "Hello World!";
@@ -10,5 +13,12 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
+        
+        Item item = new Item("Lenovo", "44879564", 447874, 69);
+        
+        Gson gson = new Gson();
+        String item_json = gson.toJson(item);
+        
+        System.out.println(item_json);
     }
 }
