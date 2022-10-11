@@ -1,6 +1,8 @@
 package com.ims;
 
+import java.io.*;
 import com.ims.*;
+import com.google.gson.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,6 +13,7 @@ public class LoginPage implements ActionListener {
     String[][] credpair;
     
     JFrame frame = new JFrame();
+    
     JButton loginBtn = new JButton("Login");
     JButton resetBtn = new JButton("Reset");
     
@@ -21,8 +24,18 @@ public class LoginPage implements ActionListener {
     JLabel passwdLabel = new JLabel("Password");
     JLabel msgLabel = new JLabel();
     
+    JCheckBox checkBox = new JCheckBox("Remember username");
+    
+    Gson gson = new Gson();
+    
     public LoginPage(String[][] credentialsOg){
         credpair = credentialsOg;
+        
+        checkBox.setFocusable(false);
+        
+        if (credpair[2][0].equals("TRUE")) {
+            usernameField.setText(credpair[2][1]);
+        };
         
         usernameLabel.setBounds(55, 55, 75, 25);
         passwdLabel.setBounds(55, 111, 75, 25);
@@ -30,8 +43,10 @@ public class LoginPage implements ActionListener {
         usernameField.setBounds(127, 55, 211, 40);
         passwdField.setBounds(127, 111, 211, 40);
         
-        loginBtn.setBounds(131, 199, 111, 25);
-        resetBtn.setBounds(233, 199, 111, 25);
+        loginBtn.setBounds(125, 199, 111, 25);
+        resetBtn.setBounds(225, 199, 111, 25);
+        
+        checkBox.setBounds(141, 157, 266, 25);
         
         loginBtn.addActionListener(this);
         resetBtn.addActionListener(this);
@@ -47,6 +62,7 @@ public class LoginPage implements ActionListener {
         frame.add(passwdField);
         frame.add(loginBtn);
         frame.add(resetBtn);
+        frame.add(checkBox);
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(444, 333);
@@ -73,11 +89,33 @@ public class LoginPage implements ActionListener {
             String usernameID = usernameField.getText();
             String passwdID = String.valueOf(passwdField.getPassword());
             
+            if (checkBox.isSelected()) {
+                credpair[2][0] = "TRUE";
+                credpair[2][1] = usernameID;
+                checkBox.setSelected(true);
+            }else{
+                credpair[2][0] = "FALSE";
+                checkBox.setSelected(false);
+            };
+            
+            try {
+                PrintWriter pw = new PrintWriter(System.getProperty("user.dir") + "\\credentials.json");
+                pw.print(gson.toJson(credpair));
+                pw.close();
+            }catch (Exception ioe){
+                System.out.println(ioe);
+            }
+            
             try {
                 if (credpair[0][0].equals(usernameID) || credpair[1][0].equals(usernameID)) {
-                    if (credpair[1][0].equals(Encryption.toHash(passwdID)) || credpair[1][1].equals(Encryption.toHash(passwdID))) {
-                        usernameField.setText("");
-                        passwdField.setText("");
+                    if (credpair[0][1].equals(Encryption.toHash(passwdID)) || credpair[1][1].equals(Encryption.toHash(passwdID))) {
+                        if (checkBox.isSelected()) {
+                            passwdField.setText("");
+                            
+                        }else{
+                            usernameField.setText("");
+                            passwdField.setText("");
+                        };
                         
                         JOptionPane.showMessageDialog(
                             null, 
@@ -85,10 +123,17 @@ public class LoginPage implements ActionListener {
                             "Login Successful",
                             JOptionPane.INFORMATION_MESSAGE
                         );
+                        
+                        frame.dispose();
                             
                     }else{
-                        usernameField.setText("");
-                        passwdField.setText("");
+                        if (checkBox.isSelected()) {
+                            passwdField.setText("");
+                            
+                        }else{
+                            usernameField.setText("");
+                            passwdField.setText("");
+                        };
                         
                         JOptionPane.showMessageDialog(
                             null, 
@@ -109,9 +154,14 @@ public class LoginPage implements ActionListener {
                             JOptionPane.INFORMATION_MESSAGE
                         );
                 }else{
-                    usernameField.setText("");
-                    passwdField.setText("");
-                    
+                    if (checkBox.isSelected()) {
+                        passwdField.setText("");
+                            
+                    }else{
+                        usernameField.setText("");
+                        passwdField.setText("");
+                    };
+                        
                     JOptionPane.showMessageDialog(
                             null, 
                             "Invalid Username!", 

@@ -6,6 +6,7 @@ import com.google.gson.*;
 
 public class CredManage {
     private String[][] creds;
+    static Gson wgson;
     
     public CredManage(){
         try {
@@ -26,5 +27,11 @@ public class CredManage {
     
     protected String[][] getCredentials(){
         return this.creds;
+    }
+    
+    static void writeCredentials(String[][] cred) throws IOException {
+        try (PrintWriter outs = new PrintWriter(System.getProperty("user.dir") + "\\credentials.json")) {
+            outs.print(wgson.toJson(cred));
+        }catch(IOException ex){};
     }
 }
