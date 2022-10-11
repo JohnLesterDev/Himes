@@ -5,7 +5,7 @@ import com.google.gson.*;
 
 
 public class CredManage {
-    private Credentials creds;
+    private String[][] creds;
     
     public CredManage(){
         try {
@@ -14,7 +14,7 @@ public class CredManage {
                 new FileReader(System.getProperty("user.dir") + "\\credentials.json")
             );
             Gson gson = new Gson();
-            this.creds = gson.fromJson(br, Credentials.class);
+            this.creds = gson.fromJson(br, String[][].class);
             br.close();
             
             }catch(Exception e){
@@ -24,7 +24,7 @@ public class CredManage {
         }
     }
     
-    protected Credentials getCredentials(){
+    protected String[][] getCredentials(){
         return this.creds;
     }
 }

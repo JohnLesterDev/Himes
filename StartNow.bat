@@ -1,3 +1,3 @@
 @echo off
 
-gradle build && java -jar app\build\libs\app.jar
+gradle build && java -jar app\build\libs\Himes.jar

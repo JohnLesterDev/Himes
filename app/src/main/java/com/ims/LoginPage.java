@@ -8,7 +8,7 @@ import java.awt.event.*;
 
 public class LoginPage implements ActionListener {
     
-    Credentials credentials;
+    String[][] credpair;
     
     JFrame frame = new JFrame();
     JButton loginBtn = new JButton("Login");
@@ -21,8 +21,8 @@ public class LoginPage implements ActionListener {
     JLabel passwdLabel = new JLabel("Password");
     JLabel msgLabel = new JLabel();
     
-    public LoginPage(Credentials credentialsOg){
-        credentials = credentialsOg;
+    public LoginPage(String[][] credentialsOg){
+        credpair = credentialsOg;
         
         usernameLabel.setBounds(55, 55, 75, 25);
         passwdLabel.setBounds(55, 111, 75, 25);
@@ -73,40 +73,53 @@ public class LoginPage implements ActionListener {
             String usernameID = usernameField.getText();
             String passwdID = String.valueOf(passwdField.getPassword());
             
-            if (credentials.getUsername().equals(usernameID)) {
-                if (credentials.getPasswd().equals(passwdID)) {
+            try {
+                if (credpair[0][0].equals(usernameID) || credpair[1][0].equals(usernameID)) {
+                    if (credpair[1][0].equals(Encryption.toHash(passwdID)) || credpair[1][1].equals(Encryption.toHash(passwdID))) {
+                        usernameField.setText("");
+                        passwdField.setText("");
+                        
+                        JOptionPane.showMessageDialog(
+                            null, 
+                            "You are now login as Admin :>", 
+                            "Login Successful",
+                            JOptionPane.INFORMATION_MESSAGE
+                        );
+                            
+                    }else{
+                        usernameField.setText("");
+                        passwdField.setText("");
+                        
+                        JOptionPane.showMessageDialog(
+                            null, 
+                            "Invalid Password!", 
+                            "Login Failed",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                }
+                else if (usernameID.equals("") && passwdID.equals("")) {
                     usernameField.setText("");
                     passwdField.setText("");
-                    
+            
                     JOptionPane.showMessageDialog(
-                        null, 
-                        "You are now login as Admin :>", 
-                        "Login Successful",
-                        JOptionPane.INFORMATION_MESSAGE
-                    );
-                    
+                            null, 
+                            "Input your username and password.", 
+                            "No Input Provided",
+                            JOptionPane.INFORMATION_MESSAGE
+                        );
                 }else{
                     usernameField.setText("");
                     passwdField.setText("");
                     
                     JOptionPane.showMessageDialog(
-                        null, 
-                        "Invalid Password!", 
-                        "Login Failed",
-                        JOptionPane.ERROR_MESSAGE
+                            null, 
+                            "Invalid Username!", 
+                            "Login Failed",
+                            JOptionPane.ERROR_MESSAGE
                     );
                 }
-            }else{
-                usernameField.setText("");
-                passwdField.setText("");
-                
-                JOptionPane.showMessageDialog(
-                        null, 
-                        "Invalid Username!", 
-                        "Login Failed",
-                        JOptionPane.ERROR_MESSAGE
-                    );
-            }
+            } catch (Exception ex){};
         }
     }
 }
